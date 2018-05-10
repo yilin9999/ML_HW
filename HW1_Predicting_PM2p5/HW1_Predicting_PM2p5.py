@@ -76,13 +76,12 @@ trainY   = trainY[:trianCnt]
 
 #initialize Training parameters
 weight_v  = np.zeros(featureCnt + 1) #include bias
-s_gra       = featureCnt + 1
-trainX_T    = np.transpose(trainX)
+trainX_T  = np.transpose(trainX)
 
 ######## Learning Perameters
-epoch       = 10000
+epoch       = 1000
 Stoch       = 1
-l_rate      = 1
+l_rate      = float(1)
 
 #Start Training
 trainXp    = trainX
@@ -90,55 +89,67 @@ trainYp    = trainY
 trainXp_T  = trainX_T
 
 if Stoch == 1:    
+    s_gra     = 1
     batchsize = 1
-    showPeried = 50000
+    showPeried  = 50
+    
 else:    
-    batchsize  = trianCnt    
-    showPeried = 1000
+    s_gra       = featureCnt + 1
+    batchsize   = trianCnt    
+    showPeried  = 1000
 
+checkPeriod = showPeried * 5 
 iteration = trianCnt//batchsize
 #epochN    = 1000*iteration
 
 trainTimeB = time.time()
-for i in range(epoch * iteration):    
-#for i in range(1):    
+for i in range(epoch):    
+#for i in range(20):    
     
+    for j in range(iteration):
     #### Stochastic Gradient desent
-    if Stoch == 1: 
-        txIdx      = i%trianCnt
-        trainXp    = trainX[txIdx]
-        trainYp    = trainY[txIdx]
-        trainXp_T  = trainXp   #1d array transpose (cannot use np.transpose)
+        if Stoch == 1: 
+            txIdx      = i%trianCnt
+            trainXp    = trainX[txIdx]
+            trainYp    = trainY[txIdx]
+            trainXp_T  = trainXp   #1d array transpose (cannot use np.transpose)
+        
+        #### Batch Gradient desenct    
+        hypo_v   = np.dot(trainXp, weight_v)
+        diff_v   = hypo_v - trainYp
+        #print(trainX_T)
+        #print(weight_v)
+        gra      =  2* np.dot(trainXp_T, diff_v)    
+        
+        s_gra += gra**2
+        ada = np.sqrt(s_gra)
+        
+        #l_rate *= 1/np.sqrt(0.00000000001 * i+1)    
+        weight_v = weight_v - l_rate * (gra/ada)    
+        #break
+        #print(l_rate)
     
-    #### Batch Gradient desenct    
-    hypo_v   = np.dot(trainXp, weight_v)
-    diff_v   = hypo_v - trainYp
-    #print(trainX_T)
-    #print(weight_v)
-    gra      =  2* np.dot(trainXp_T, diff_v)    
-    
-    s_gra += gra**2
-    ada = np.sqrt(s_gra)
-    #weight_v = weight_v - l_rate * (gra/ada)
-    weight_v = weight_v - l_rate * gra
-    #break
-    
+    #### Monitor
     if(i % showPeried == 0):
         if Stoch == 1:        
             hypo_v   = np.dot(trainX, weight_v)
-            diff_v   = hypo_v - trainY                
-    
-        Loss     = np.sqrt(np.sum(diff_v**2)/trianCnt)        
-        print("%d interation: Loss = %.4f" %(i, Loss))
+            diff_v   = hypo_v - trainY       
+        Loss     = np.sqrt(np.mean(diff_v**2))                
+        print("%d interation: l_rate=%.4f, Loss = %.4f" %(i, l_rate, Loss))
         
-#end for i in range(1): 
+        if (i % checkPeriod == 0):
+            test_routing(weight_v, testFile, ansFile, Loss)
         
+#end for i in range(1):         
 trainTimeE = time.time()
+
+test_routing(weight_v, testFile, ansFile, Loss)
+
 
 print("Training Time: %.4f sec" %(trainTimeE - trainTimeB))
 
 
-test_routing(weight_v, testFile, ansFile)
+
 
 
 

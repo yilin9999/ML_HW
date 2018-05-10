@@ -8,10 +8,11 @@ import csv
 import numpy as np
 
     
-def test_routing(myModel, testFile, ansFile):
+def test_routing(myModel, testFile, ansFile, trainLoss):
     #:type myModel:  np.array 163 x 1
     #:type testFile: str
-    #:type ansFile: str
+    #:type trainLoss: float
+    #:type ansFile: str    
 
     #Read Testing file
     fptr  = open(testFile, "r")
@@ -50,13 +51,27 @@ def test_routing(myModel, testFile, ansFile):
     testY = np.array(tmpList)
     fptr.close()
     
-    ############ Test
-    #testX_T = np.transpose(testX)
+    ############ Test    
     testR   = np.dot(testX, myModel)
-    diff = (testR - testY)
-    #grade = np.sqrt((diff**2)/len(testY))
-    grade = np.std(diff)
-    print("Grade = %.4f" % grade)
+    diff = (testR - testY)    
+    grade = np.sqrt(np.mean(diff**2))
+    #grade = np.sqrt(np.sum((diff)**2)/len(diff))
+    print("trainLoss = %.4f  RMSE = %.4f" %(trainLoss, grade))
+    
+    """
+    if wen:
+        fptr  = open("outfile.csv", "w")
+        csvWr = csv.writer(fptr)    
+        
+        outList = [trainLoss, grade]
+        csvWr.writerow([], delimiter=',')
 
+        fptr.close()
+       """ 
 #end of def test_routing:
+
+    
+
+    
+    
 
