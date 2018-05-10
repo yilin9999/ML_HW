@@ -79,11 +79,11 @@ weight_v  = np.zeros(featureCnt + 1) #include bias
 trainX_T  = np.transpose(trainX)
 
 ######## Learning Perameters
-epoch       = 100000
+epoch       = 1000
 Stoch       = 1
-l_rate      = float(10)
+l_rate      = float(100)
 
-#Start Training
+
 trainXp    = trainX
 trainYp    = trainY
 trainXp_T  = trainX_T
@@ -91,8 +91,7 @@ trainXp_T  = trainX_T
 if Stoch == 1:    
     s_gra     = 1
     batchsize = 1
-    showPeried  = 30
-    
+    showPeried  = 30   
 else:    
     s_gra       = featureCnt + 1
     batchsize   = trianCnt    
@@ -101,6 +100,8 @@ else:
 checkPeriod = showPeried * 5 
 iteration = trianCnt//batchsize
 #epochN    = 1000*iteration
+
+######## Start Training
 
 trainTimeB = time.time()
 for i in range(epoch):    
@@ -124,7 +125,7 @@ for i in range(epoch):
         s_gra += gra**2
         ada = np.sqrt(s_gra)
         
-        l_rate *= 1/np.sqrt(1.0e-11 * i+1)    
+        l_rate *= 1/np.sqrt(1.0e-8*i+1)    
         weight_v = weight_v - l_rate * (gra/ada)    
         #break
         #print(l_rate)
