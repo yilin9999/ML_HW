@@ -1,3 +1,5 @@
 *.log
 *.csv
 HW1_Predicting_PM2p5/test.csv
+ml-2017fall-hw1.pdf
+HW1_Predicting_PM2p5/__pycache__/HW1_test.cpython-36.pyc

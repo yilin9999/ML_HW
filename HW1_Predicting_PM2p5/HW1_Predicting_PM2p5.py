@@ -10,9 +10,9 @@ import time
 from HW1_test import test_routing
 
 
-testFile  = "test.csv"
-trainFile = "train.csv"
-ansFile   = "ans.csv"
+testFile  = "./test.csv"
+trainFile = "./train.csv"
+ansFile   = "./ans.csv"
 
 
 #Read Training file
