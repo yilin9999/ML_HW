@@ -76,45 +76,65 @@ trainY   = trainY[:trianCnt]
 
 #initialize Training parameters
 weight_v  = np.zeros(featureCnt + 1) #include bias
-iteration   = 100000
-l_rate      = 1
-#s_gra       = featureCnt + 1
 s_gra       = featureCnt + 1
 trainX_T    = np.transpose(trainX)
-Stoch       = 0
+
+######## Learning Perameters
+epoch       = 10000
+Stoch       = 1
+l_rate      = 1
 
 #Start Training
 trainXp    = trainX
 trainYp    = trainY
-trainX_Tp  = trainX_T
-trainTimeB = time.time()
+trainXp_T  = trainX_T
 
-for i in range(iteration):    
+if Stoch == 1:    
+    batchsize = 1
+    showPeried = 50000
+else:    
+    batchsize  = trianCnt    
+    showPeried = 1000
+
+iteration = trianCnt//batchsize
+#epochN    = 1000*iteration
+
+trainTimeB = time.time()
+for i in range(epoch * iteration):    
+#for i in range(1):    
     
     #### Stochastic Gradient desent
     if Stoch == 1: 
         txIdx      = i%trianCnt
         trainXp    = trainX[txIdx]
         trainYp    = trainY[txIdx]
-        trainX_Tp  = np.transpose(trainXp)
+        trainXp_T  = trainXp   #1d array transpose (cannot use np.transpose)
     
     #### Batch Gradient desenct    
     hypo_v   = np.dot(trainXp, weight_v)
     diff_v   = hypo_v - trainYp
     #print(trainX_T)
     #print(weight_v)
-    gra      =  2* np.dot(trainX_Tp, diff_v)    
+    gra      =  2* np.dot(trainXp_T, diff_v)    
     
     s_gra += gra**2
     ada = np.sqrt(s_gra)
-    weight_v = weight_v - l_rate * gra/ada
+    #weight_v = weight_v - l_rate * (gra/ada)
+    weight_v = weight_v - l_rate * gra
+    #break
     
+    if(i % showPeried == 0):
+        if Stoch == 1:        
+            hypo_v   = np.dot(trainX, weight_v)
+            diff_v   = hypo_v - trainY                
     
-    if(i% 1000==0):
-        Loss     = np.sqrt(np.sum(diff_v**2)/trianCnt)
+        Loss     = np.sqrt(np.sum(diff_v**2)/trianCnt)        
         print("%d interation: Loss = %.4f" %(i, Loss))
         
+#end for i in range(1): 
+        
 trainTimeE = time.time()
+
 print("Training Time: %.4f sec" %(trainTimeE - trainTimeB))
 
 
