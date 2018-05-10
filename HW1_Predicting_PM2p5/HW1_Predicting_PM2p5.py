@@ -79,9 +79,9 @@ weight_v  = np.zeros(featureCnt + 1) #include bias
 trainX_T  = np.transpose(trainX)
 
 ######## Learning Perameters
-epoch       = 1000
+epoch       = 100000
 Stoch       = 1
-l_rate      = float(1)
+l_rate      = float(10)
 
 #Start Training
 trainXp    = trainX
@@ -91,7 +91,7 @@ trainXp_T  = trainX_T
 if Stoch == 1:    
     s_gra     = 1
     batchsize = 1
-    showPeried  = 50
+    showPeried  = 30
     
 else:    
     s_gra       = featureCnt + 1
@@ -124,7 +124,7 @@ for i in range(epoch):
         s_gra += gra**2
         ada = np.sqrt(s_gra)
         
-        #l_rate *= 1/np.sqrt(0.00000000001 * i+1)    
+        l_rate *= 1/np.sqrt(1.0e-11 * i+1)    
         weight_v = weight_v - l_rate * (gra/ada)    
         #break
         #print(l_rate)
