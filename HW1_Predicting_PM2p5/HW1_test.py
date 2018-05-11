@@ -19,7 +19,7 @@ def test_routing(myModel, testFile, ansFile, trainLoss):
     fptr  = open(testFile, "r")
     frow  = csv.reader(fptr, delimiter=",")
     
-    ############ Read TestX
+    ############# Read TestX
     tmpList = []
     rowCnt  = 0
     for irow in frow:    
@@ -40,7 +40,7 @@ def test_routing(myModel, testFile, ansFile, trainLoss):
     testX = np.array(tmpList)
     testX = np.concatenate((testX, np.ones((len(testX),1))), axis=1)
     
-    ############ Read TestY
+    ############# Read TestY
     tmpList = []
     fptr  = open(ansFile, "r")
     frow  = csv.reader(fptr, delimiter=",")  
