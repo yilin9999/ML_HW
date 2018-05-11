@@ -6,6 +6,7 @@ Created on Wed May  9 23:21:52 2018
 """
 import csv 
 import numpy as np
+#
 
     
 def test_routing(myModel, testFile, ansFile, trainLoss):
