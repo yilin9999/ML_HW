@@ -132,7 +132,7 @@ class LossHistory(keras.callbacks.Callback):
 epochNum = 100000
 sgd = optimizers.SGD(lr=0.0001, decay=0.000, momentum=0.5, nesterov=None)
 adag = optimizers.Adagrad(lr=0.01)
-adam = optimizers.Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.000, amsgrad=False)
+adam = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=1e-6, amsgrad=False)
 
 #myModel.compile(loss='mse', optimizer=adam)
 #myModel.fit(trainX, trainY, nb_epoch=epochNum, batch_size=5620, verbose=1)
@@ -142,21 +142,21 @@ history = LossHistory()
 myModel.compile(loss='mse', optimizer=adam, metrics=['accuracy'])
 
 beginTime = time()
-myModel.fit(trainX, trainY, nb_epoch=epochNum, batch_size=20, verbose=1)
-#for i in range(epochNum):
-#    Loss = myModel.train_on_batch(trainX, trainY)
-#    if i%500 == 0:
-#        print("%d interation: Loss=%.4f" %(i, np.sqrt(Loss)))    
+#myModel.fit(trainX, trainY, nb_epoch=epochNum, batch_size=200, shuffle=True, verbose=0)
+for i in range(epochNum):
+    Loss = myModel.train_on_batch(trainX, trainY)[0]
+    if i%500 == 0:
+        print("%d interation: Loss=%.4f" %(i, np.sqrt(Loss)))    
        
 endTime = time()
 
-Loss = myModel.evaluate(trainX, trainY, batch_size=5620)
+Loss = myModel.evaluate(trainX, trainY, batch_size=5620)[0]
 
 RMSE = np.sqrt(Loss)
 print("Loss=%.4f" %(RMSE))    
 print("Training Time: %.4f sec" %(endTime - beginTime))
 
-score  = myModel.evaluate(testX, testY, batch_size=240)
+score  = myModel.evaluate(testX, testY, batch_size=240)[0]
 w, b = myModel.layers[0].get_weights()
 print("Eout=%.4f" %(np.sqrt(score)))   
 

@@ -39,7 +39,8 @@ def test_routing(myModel, testFile, ansFile, trainLoss):
     
     testX = np.array(tmpList)
     testX = np.concatenate((testX, np.ones((len(testX),1))), axis=1)
-    
+   
+   
     ############# Read TestY
     tmpList = []
     fptr  = open(ansFile, "r")
@@ -54,10 +55,14 @@ def test_routing(myModel, testFile, ansFile, trainLoss):
     
     ############ Test    
     testR   = np.dot(testX, myModel)
-    diff = (testR - testY)    
-    grade = np.sqrt(np.mean(diff**2))
+    mse = (testR - testY)**2    
+    
+    grade_public = np.sqrt(np.mean(mse[:120]))
+    grade_private = np.sqrt(np.mean(mse[120:]))
     #grade = np.sqrt(np.sum((diff)**2)/len(diff))
-    print("trainLoss = %.4f  RMSE = %.4f" %(trainLoss, grade))
+    print("trainLoss = %.4f  RMSE         = %.4f" %(trainLoss, (grade_public+grade_private)/2))
+    print("trainLoss = %.4f  RMSE_public  = %.4f" %(trainLoss, grade_public))
+    print("trainLoss = %.4f  RMSE_private = %.4f" %(trainLoss, grade_private))
     
     """
     if wen:
