@@ -80,9 +80,9 @@ weight_v  = np.zeros(featureCnt + 1) #include bias
 trainX_T  = np.transpose(trainX)
 
 ######## Learning Perameters
-epoch       = 200000
-Stoch       = 0
-l_rate      = float(1)
+epoch       = 1000
+Stoch       = 1
+l_rate      = float(0.001)
 
 
 trainXp    = trainX
@@ -126,7 +126,7 @@ for i in range(epoch):
         s_gra += gra**2
         ada = np.sqrt(s_gra)
         
-        l_rate *= 1/np.sqrt(1.0e-10*i+1)    
+        l_rate *= 1/np.sqrt(1.0e-9*i+1)    
         #l_rate = 1
         weight_v = weight_v - l_rate * (gra/ada)    
         #break
@@ -138,7 +138,7 @@ for i in range(epoch):
             hypo_v   = np.dot(trainX, weight_v)
             diff_v   = hypo_v - trainY       
         Loss     = np.sqrt(np.mean(diff_v**2))                
-        print("%d interation: l_rate=%.4f, Loss = %.4f" %(i, l_rate, Loss))
+        print("%d interation: l_rate=%f, Loss = %.4f" %(i, l_rate, Loss))
         
         if (i % checkPeriod == 0):
             test_routing(weight_v, testFile, ansFile, Loss)
