@@ -53,6 +53,11 @@ def main():
     sigma1 /= cnt1
     
     sh_sigma = (float(cnt0)/sampleCnt)*sigma0 + (float(cnt1)/sampleCnt)*sigma1    
+    
+    #for i in range(len(sh_sigma)):
+    #    for j in range (len(sh_sigma)):
+    #        if i!=j:
+    #            sh_sigma[i][j]=0
         
     w, b, acc = gnerative_train(trainX, trainY, cnt0, cnt1, mu0, mu1, sh_sigma)
 
