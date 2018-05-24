@@ -1,7 +1,6 @@
 *.log
-ml-2017fall-hw1.pdf
-HW1_Predicting_PM2p5/__pycache__/HW1_test.cpython-36.pyc
-HW1_Predicting_PM2p5/tmp.csv
-HW1_Predicting_PM2p5/tmp_x.csv
-HW1_Predicting_PM2p5/tmp_y.csv
-HW1_Predicting_PM2p5/tmp0.csv
+*.pyc
+*.csv
+*.pptx
+*.pdf
+
