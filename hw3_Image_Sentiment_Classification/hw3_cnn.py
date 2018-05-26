@@ -46,7 +46,8 @@ def create_cnn(featureCnt, ClassCnt):
     
     cnnModel.add(Dropout(0.5))
     cnnModel.add(Flatten())        
-    #cnnModel.add(Dense(512, activation='relu'))    
+    cnnModel.add(Dense(512, activation='relu'))    
+    cnnModel.add(Dropout(0.2))
     cnnModel.add(Dense(128, activation='relu'))
     cnnModel.add(Dense(output_dim=ClassCnt, activation='softmax'))
 
@@ -64,7 +65,7 @@ def main(opts):
     
     featureCnt = trainX.shape[1]
     ClassCnt   = 7
-    epochNum   = 10    
+    epochNum   = 100
     
     cnnModel = create_cnn(featureCnt, ClassCnt)
     
