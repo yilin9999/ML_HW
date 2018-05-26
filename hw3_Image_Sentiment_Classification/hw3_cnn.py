@@ -85,14 +85,13 @@ def main(opts):
     
 if __name__ == "__main__":
     parser = ArgumentParser(description='CNN')                 
-    group  = parser.add_mutually_exclusive_group() 
+    #group  = parser.add_mutually_exclusive_group() 
     
-    parser.add_argument('--tra_data_path', 
+    parser.add_argument('--train_data_path', 
                         type=str,
                         default="C:\\testdata\\train_small.csv", 
                         dest='train_data_path',
                         help='train_data_path')  
     
-    opts = parser.parse_args()
-    
+    opts = parser.parse_args()    
     main(opts)
