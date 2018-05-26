@@ -33,7 +33,7 @@ def create_cnn(featureCnt, ClassCnt):
     
     cnnModel.add(MaxPooling2D(pool_size=(2, 2), strides=1))    
     
-    cnnModel.add(Conv2D(filters=32, 
+    cnnModel.add(Conv2D(filters=16, 
                         kernel_size=kernelSize, 
                         padding="same",
                         activation='relu', 

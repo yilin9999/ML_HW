@@ -58,8 +58,7 @@ class MyData:
         tY = self.trainY[:th]
         vY = self.trainY[th:]
         
-        return tX, vX, tY, vY
-            
+        return tX, vX, tY, vY            
         
         
     def get_train_data(self):
