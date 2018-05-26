@@ -27,7 +27,7 @@ def create_cnn(featureCnt, ClassCnt):
     
     cnnModel = Sequential()
     
-    cnnModel.add(Conv2D(filters=16, 
+    cnnModel.add(Conv2D(filters=32, 
                         kernel_size=kernelSize, 
                         input_shape=imgShape,    #default is channel last
                         padding="same",                                        
@@ -36,7 +36,7 @@ def create_cnn(featureCnt, ClassCnt):
     
     cnnModel.add(MaxPooling2D(pool_size=(2, 2), strides=1))    
     
-    cnnModel.add(Conv2D(filters=16, 
+    cnnModel.add(Conv2D(filters=32, 
                         kernel_size=kernelSize, 
                         padding="same",
                         activation='relu', 
@@ -44,9 +44,9 @@ def create_cnn(featureCnt, ClassCnt):
     
     cnnModel.add(MaxPooling2D(pool_size=(2, 2), strides=1))
     
-    cnnModel.add(Dropout(0.2))
+    cnnModel.add(Dropout(0.5))
     cnnModel.add(Flatten())        
-    cnnModel.add(Dense(512, activation='relu'))    
+    #cnnModel.add(Dense(512, activation='relu'))    
     cnnModel.add(Dense(128, activation='relu'))
     cnnModel.add(Dense(output_dim=ClassCnt, activation='softmax'))
 
@@ -68,14 +68,14 @@ def main(opts):
     
     cnnModel = create_cnn(featureCnt, ClassCnt)
     
-    myEarlyStop = callbacks.EarlyStopping(monitor='val_loss', patience=10, verbose=1, mode='auto')
+    myEarlyStop = callbacks.EarlyStopping(monitor='val_loss', patience=3, verbose=1, mode='auto')
     adam = optimizers.adam(lr=0.001)
     cnnModel.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
     beginTime = time.time()
     history = cnnModel.fit(trainX, trainY, 
                            epochs=epochNum, 
-                           batch_size=10,
+                           batch_size=200,
                            validation_data=(validX, validY),
                            callbacks=[myEarlyStop],
                            shuffle=True,
