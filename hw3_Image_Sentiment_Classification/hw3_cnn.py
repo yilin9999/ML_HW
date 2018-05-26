@@ -16,6 +16,7 @@ from keras.layers import Flatten
 from keras.layers import MaxPooling2D
 from keras import optimizers
 from keras import callbacks
+import time
     
 def create_cnn(featureCnt, ClassCnt):
     imgShape = (48,48,1) #((batch, height, width, channels))
@@ -54,8 +55,8 @@ def create_cnn(featureCnt, ClassCnt):
 
 def main():
     
-    #trainData = MyData("C:\\testdata\\train_small.csv")    
-    trainData = MyData("C:\\testdata\\train.csv")    
+    trainData = MyData("C:\\testdata\\train_small.csv")    
+    #trainData = MyData("C:\\testdata\\train.csv")    
     
     trainX, validX, trainY, validY = trainData.split_valid_data(0.2)
     
@@ -69,6 +70,7 @@ def main():
     adam = optimizers.adam(lr=0.001)
     cnnModel.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
+    beginTime = time.time()
     history = cnnModel.fit(trainX, trainY, 
                            epochs=epochNum, 
                            batch_size=10,
@@ -76,7 +78,8 @@ def main():
                            callbacks=[myEarlyStop],
                            shuffle=True,
                            verbose=2)
-    
+    endTime = time.time()
+    print("Run Time: %.2f" %(endTime-beginTime))
     
 if __name__ == "__main__":
     main()
