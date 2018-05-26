@@ -16,6 +16,8 @@ from keras.layers import Flatten
 from keras.layers import MaxPooling2D
 from keras import optimizers
 from keras import callbacks
+
+from argparse import ArgumentParser
 import time
     
 def create_cnn(featureCnt, ClassCnt):
@@ -53,9 +55,9 @@ def create_cnn(featureCnt, ClassCnt):
     return cnnModel
 
 
-def main():
+def main(opts):
     
-    trainData = MyData("C:\\testdata\\train_small.csv")    
+    trainData = MyData(opts.train_data_path)    
     #trainData = MyData("C:\\testdata\\train.csv")    
     
     trainX, validX, trainY, validY = trainData.split_valid_data(0.2)
@@ -79,7 +81,18 @@ def main():
                            shuffle=True,
                            verbose=2)
     endTime = time.time()
-    print("Run Time: %.2f" %(endTime-beginTime))
+    print("Run Time: %.2fsec" %(endTime-beginTime))
     
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser(description='CNN')                 
+    group  = parser.add_mutually_exclusive_group() 
+    
+    parser.add_argument('--tra_data_path', 
+                        type=str,
+                        default="C:\\testdata\\train_small.csv", 
+                        dest='train_data_path',
+                        help='train_data_path')  
+    
+    opts = parser.parse_args()
+    
+    main(opts)
