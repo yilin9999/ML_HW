@@ -79,7 +79,7 @@ def main(opts):
                            validation_data=(validX, validY),
                            callbacks=[myEarlyStop],
                            shuffle=True,
-                           verbose=2)
+                           verbose=1)
     endTime = time.time()
     print("Run Time: %.2fsec" %(endTime-beginTime))
     
