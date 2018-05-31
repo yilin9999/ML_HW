@@ -1,6 +1,7 @@
 *.log
 *.pyc
-*.csv
 *.pptx
 *.pdf
+*.csv
+*.pkl
 

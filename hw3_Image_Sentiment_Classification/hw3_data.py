@@ -8,6 +8,9 @@ Created on Fri May 25 00:06:25 2018
 import numpy as np
 from sklearn.cross_validation import train_test_split
 from keras.utils import np_utils 
+import matplotlib.pyplot as plt
+from os import path
+import pickle
 
 class MyData:
     def __init__(self, filename, normalize=1):            
@@ -17,7 +20,12 @@ class MyData:
     def load_data(self, filename, normalize=1):
         #input: filename = str
         
-        trainAll = np.loadtxt(filename, skiprows=1, dtype=np.str, delimiter=",")        
+        try:
+            trainAll = np.loadtxt(filename, skiprows=1, dtype=np.str, delimiter=",")        
+            print("Loading %s" %filename)
+        except:
+            print("Cannot open %s" %filename)
+            exit(0)
         #trainAll = trainAll[:100]
         
         tempList = []
@@ -67,7 +75,81 @@ class MyData:
     def get_valid_data(self):
         return self.trainX, self.trainY    
     
+    def plot_result(self, readDict):
+        plt.plot(readDict['acc'])
+        plt.plot(readDict['val_acc'])
+        plt.title('model accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
+        # summarize history for loss
+        plt.plot(readDict['loss'])
+        plt.plot(readDict['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
         
+    def write_result(self, myHistory, ParaDict, runtime):
+        #filename_train = 'loss_history_train.txt'
+        #filename_test  = 'loss_history_loss.txt'
+        
+        with open("history.pkl","wb") as fptr:             
+            pickle.dump(myHistory.history, fptr)                    
+            
+        if path.isfile("history.log"):            
+            newfile = 0
+        else:
+            print("Create history.log")
+            newfile = 1
+            
+        
+        with open("history.log","a") as fptr:
+            #printList = []
+            
+            if newfile==1:
+                for itr in ParaDict.keys():                    
+                    outstr = "%12s" % itr
+                    fptr.write(outstr)                    
+                fptr.write("%12s\n" %("Time"))
+                
+                for i in range(len(myHistory.history['acc']))                    :
+                    outstr = '#%d' % i
+                    fptr.write(outstr)
+           
+            for itr in ParaDict.keys(): 
+                outstr = "%12s" % str(ParaDict[itr])
+                fptr.write(outstr)            
+            
+            fptr.write("%12d" %runtime)
+                 
+            for itr in myHistory.history['acc']:                
+                outstr = "%12.4f" % itr
+                fptr.write(outstr)
+
+            fptr.write("\n")
+            #printList.extend(myHistory.history['loss'])            
+            #fptr.writelines(printList)
+        
+        #title_list = []
+            
+
+    def read_result(self):
+        with open("history.pkl","rb") as fptr:
+            readDict = pickle.load(fptr)
+        """
+        try: 
+            myHistory = pickle.load(fptr)
+        except (EnvironmentError, pickle.PicklingError) as err:            
+            print("Cannot open %s" %filename)
+        finally:
+            fptr.close()
+        """
+        self.plot_result(readDict)
+        
+             
 
 
     

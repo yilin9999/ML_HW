@@ -14,10 +14,15 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers import MaxPooling2D
+from keras import regularizers
+
 from keras import optimizers
+from keras import initializers
 from keras import callbacks
 
 from argparse import ArgumentParser
+
+
 import time
     
 def create_cnn(featureCnt, ClassCnt):
@@ -30,31 +35,32 @@ def create_cnn(featureCnt, ClassCnt):
     cnnModel.add(Conv2D(filters=32, 
                         kernel_size=kernelSize, 
                         input_shape=imgShape,    #default is channel last
-                        padding="same",                                        
+                        padding="same",  
+                        kernel_initializer='glorot_normal',
                         activation='relu'                   
                         ))
     
     cnnModel.add(MaxPooling2D(pool_size=(2, 2), strides=1))    
     
-    cnnModel.add(Conv2D(filters=32, 
+    cnnModel.add(Conv2D(filters=64, 
                         kernel_size=kernelSize, 
                         padding="same",
+                        kernel_initializer='glorot_normal',
                         activation='relu', 
                         ))    
-    
+        
     cnnModel.add(MaxPooling2D(pool_size=(2, 2), strides=1))
     
-    cnnModel.add(Dropout(0.5))
-    cnnModel.add(Flatten())        
-    cnnModel.add(Dense(512, activation='relu'))    
     cnnModel.add(Dropout(0.2))
-    cnnModel.add(Dense(128, activation='relu'))
+    cnnModel.add(Flatten())        
+    cnnModel.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.001)))    
+    cnnModel.add(Dropout(0.2))
+    cnnModel.add(Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
     cnnModel.add(Dense(output_dim=ClassCnt, activation='softmax'))
 
     cnnModel.summary()  
     
     return cnnModel
-
 
 def main(opts):
     
@@ -65,24 +71,37 @@ def main(opts):
     
     featureCnt = trainX.shape[1]
     ClassCnt   = 7
-    epochNum   = 100
+  
+    cnnParaDict = {'epochNum' : opts.epochNum,
+                   'batchSize': opts.batchSize,
+                   'cov2dNum' : opts.cov2dNum,
+                   'filterNum': opts.filterNum
+                   }    
     
     cnnModel = create_cnn(featureCnt, ClassCnt)
     
-    myEarlyStop = callbacks.EarlyStopping(monitor='val_loss', patience=3, verbose=1, mode='auto')
+    myEarlyStop = callbacks.EarlyStopping(monitor='val_loss', patience=5, verbose=1, mode='auto')
     adam = optimizers.adam(lr=0.001)
     cnnModel.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
     beginTime = time.time()
-    history = cnnModel.fit(trainX, trainY, 
-                           epochs=epochNum, 
-                           batch_size=200,
-                           validation_data=(validX, validY),
-                           callbacks=[myEarlyStop],
-                           shuffle=True,
-                           verbose=1)
+    myHistory = cnnModel.fit(trainX, trainY, 
+                             epochs=cnnParaDict['epochNum'], 
+                             batch_size=cnnParaDict['batchSize'],
+                             validation_data=(validX, validY),
+                             callbacks=[myEarlyStop],
+                             shuffle=True,
+                             verbose=1)
     endTime = time.time()
-    print("Run Time: %.2fsec" %(endTime-beginTime))
+    
+    runtime = endTime-beginTime
+    print("Run Time: %.2fsec" %runtime)
+    
+    #MyData.plot_result(myHistory)
+    trainData.write_result(myHistory, cnnParaDict, runtime)
+    
+    if opts.plot:
+        trainData.read_result()
     
 if __name__ == "__main__":
     parser = ArgumentParser(description='CNN')                 
@@ -93,6 +112,36 @@ if __name__ == "__main__":
                         default="C:\\testdata\\train_small.csv", 
                         dest='train_data_path',
                         help='train_data_path')  
+    
+    parser.add_argument('--epoch', 
+                        type=int,
+                        default=3,
+                        dest='epochNum',
+                        help='epochNum') 
+    
+    parser.add_argument('--batch_size', 
+                        type=int,
+                        default=300,
+                        dest='batchSize',
+                        help='batchSize') 
+    
+    parser.add_argument('--cov2d', 
+                        type=int,
+                        default=2,
+                        dest='cov2dNum',
+                        help='cov2dNum') 
+    
+    parser.add_argument('--filter', 
+                        type=int,
+                        default=2,
+                        dest='filterNum',
+                        help='filterNum') 
+    
+    parser.add_argument('-p', 
+                        action='store_true',
+                        default=False,                        
+                        dest='plot',
+                        help='plot') 
     
     opts = parser.parse_args()    
     main(opts)
