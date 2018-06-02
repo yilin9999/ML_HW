@@ -38,7 +38,7 @@ class MyData:
         else:            
             self.trainX = np.array(tempList).astype(np.uint8)                                   
             
-            
+        #reshape   
         self.trainX = self.trainX.reshape(self.trainX.shape[0], 48, 48, 1)
         self.trainY = trainAll[:,0].astype(np.uint8)        
         
@@ -92,7 +92,7 @@ class MyData:
         plt.legend(['train', 'test'], loc='upper left')
         plt.show()
         
-    def write_result(self, myHistory, ParaDict, runtime):
+    def write_result(self, myHistory, paraDict, runtime):
         #filename_train = 'loss_history_train.txt'
         #filename_test  = 'loss_history_loss.txt'
         
@@ -105,29 +105,27 @@ class MyData:
             print("Create history.log")
             newfile = 1
             
+        paraDict['Time']      = "%d"   % np.round(runtime)
+        paraDict['Train_acc'] = "%.4f" % myHistory.history['acc'][-1]
+        paraDict['Val_acc']   = "%.4f" % myHistory.history['val_acc'][-1]
         
         with open("history.log","a") as fptr:
             #printList = []
             
             if newfile==1:
-                for itr in ParaDict.keys():                    
-                    outstr = "%12s" % itr
-                    fptr.write(outstr)                    
-                fptr.write("%12s\n" %("Time"))
+                for itr in paraDict.keys():                                        
+                    fptr.write("%10s" % itr)                    
                 
-                for i in range(len(myHistory.history['acc']))                    :
+                for i in range(paraDict['epochNum'])                    :
                     outstr = '#%d' % i
-                    fptr.write(outstr)
+                    fptr.write("%10s" %outstr)
+                fptr.write("\n")
            
-            for itr in ParaDict.keys(): 
-                outstr = "%12s" % str(ParaDict[itr])
-                fptr.write(outstr)            
-            
-            fptr.write("%12d" %runtime)
+            for itr in paraDict.keys():                 
+                fptr.write("%10s" % str(paraDict[itr]))            
                  
-            for itr in myHistory.history['acc']:                
-                outstr = "%12.4f" % itr
-                fptr.write(outstr)
+            for itr in myHistory.history['acc']:                                
+                fptr.write("%10.4f" % itr)
 
             fptr.write("\n")
             #printList.extend(myHistory.history['loss'])            
